@@ -6,9 +6,9 @@
  * DATE: March 3, 2018
  *
  * FUNCTIONS:
- * int createEpollFd(void);
- * void addEpollSocket(const int epollfd, const int sock, struct epoll_event *ev);
- * int waitForEpollEvent(const int epollfd, struct epoll_event *events);
+ * int create_epoll_fd(void);
+ * void add_epoll_fd(const int epollfd, const int sock, struct epoll_event *ev);
+ * int wait_epoll_event(const int epollfd, struct epoll_event *events);
  *
  * DESIGNER: John Agapeyev
  *
@@ -22,10 +22,9 @@
 
 #define MAX_EPOLL_EVENTS 64
 
-int createEpollFd(void);
-void addEpollSocket(const int epollfd, const int sock, struct epoll_event *ev);
-int waitForEpollEvent(const int epollfd, struct epoll_event *events);
-size_t singleEpollReadInstance(const int sock, unsigned char *buffer, const size_t bufSize);
+int create_epoll_fd(void);
+void add_epoll_fd(const int epollfd, const int sock, struct epoll_event *ev);
+int wait_epoll_event(const int epollfd, struct epoll_event *events);
 
 #endif
 

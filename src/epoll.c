@@ -6,9 +6,9 @@
  * DATE: March 3, 2018
  *
  * FUNCTIONS:
- * int createEpollFd(void);
- * void addEpollSocket(const int epollfd, const int sock, struct epoll_event *ev);
- * int waitForEpollEvent(const int epollfd, struct epoll_event *events);
+ * int create_epoll_fd(void);
+ * void add_epoll_fd(const int epollfd, const int sock, struct epoll_event *ev);
+ * int wait_epoll_event(const int epollfd, struct epoll_event *events);
  *
  * DESIGNER: John Agapeyev
  *
@@ -23,7 +23,7 @@
 #include "common.h"
 
 /*
- * FUNCTION: createEpollFd
+ * FUNCTION: create_epoll_fd
  *
  * DATE:
  * Dec. 2, 2017
@@ -35,19 +35,19 @@
  * John Agapeyev
  *
  * INTERFACE:
- * int createEpollFd(void);
+ * int create_epoll_fd(void);
  *
  * RETURNS:
  * int - The created epoll file descriptor
  */
-int createEpollFd(void) {
+int create_epoll_fd(void) {
     int efd;
     ensure((efd = epoll_create1(0)) != -1);
     return efd;
 }
 
 /*
- * FUNCTION: addEpollSocket
+ * FUNCTION: add_epoll_fd
  *
  * DATE:
  * Dec. 2, 2017
@@ -59,7 +59,7 @@ int createEpollFd(void) {
  * John Agapeyev
  *
  * INTERFACE:
- * void addEpollSocket(const int epollfd, const int sock, struct epoll_event *ev);
+ * void add_epoll_fd(const int epollfd, const int sock, struct epoll_event *ev);
  *
  * PARAMETERS:
  * const int epollfd - The epoll descriptor to add the socket to
@@ -69,12 +69,12 @@ int createEpollFd(void) {
  * RETURNS:
  * void
  */
-void addEpollSocket(const int epollfd, const int sock, struct epoll_event *ev) {
+void add_epoll_fd(const int epollfd, const int sock, struct epoll_event *ev) {
     ensure(epoll_ctl(epollfd, EPOLL_CTL_ADD, sock, ev) != -1);
 }
 
 /*
- * FUNCTION: waitForEpollEvent
+ * FUNCTION: wait_epoll_event
  *
  * DATE:
  * Dec. 2, 2017
@@ -86,7 +86,7 @@ void addEpollSocket(const int epollfd, const int sock, struct epoll_event *ev) {
  * John Agapeyev
  *
  * INTERFACE:
- * int waitForEpollEvent(const int epollfd, struct epoll_event *events);
+ * int wait_epoll_event(const int epollfd, struct epoll_event *events);
  *
  * PARAMETERS:
  * const int epollfd - The epoll descriptor to wait on
@@ -95,7 +95,7 @@ void addEpollSocket(const int epollfd, const int sock, struct epoll_event *ev) {
  * RETURNS:
  * int - The number of events on the epoll descriptor
  */
-int waitForEpollEvent(const int epollfd, struct epoll_event *events) {
+int wait_epoll_event(const int epollfd, struct epoll_event *events) {
     int nevents;
     ensure((nevents = epoll_wait(epollfd, events, MAX_EPOLL_EVENTS, -1)) != -1);
     return nevents;
