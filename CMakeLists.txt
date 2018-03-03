@@ -26,9 +26,11 @@ file(GLOB MAIN
     )
 
 add_executable(8006-asn3 ${MAIN})
+
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-target_link_libraries(8006-asn3 rt Threads::Threads)
+find_package(Curses REQUIRED)
+include_directories(${CURSES_INCLUDE_DIR})
+
+target_link_libraries(8006-asn3 rt Threads::Threads ${CURSES_LIBRARIES})
