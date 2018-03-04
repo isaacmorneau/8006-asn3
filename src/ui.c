@@ -22,7 +22,7 @@ void init_ui() {
     NCURSES_BULLSHIT_INIT;
 
     write_width = COLS - COMMAND_WIDTH - 2;
-    write_height = LINES - 2;
+    write_height = LINES - 1;
 
     command_window = newwin(LINES, COMMAND_WIDTH, 0, 0);
     info_window = newwin(LINES, write_width, 0, COMMAND_WIDTH + 1);
@@ -63,18 +63,18 @@ void add_msg(const char * restrict msg) {
     }
 
     //clear the output
-    for (int i = 0;i < write_height; ++i) {
-        mvwhline(info_window, i + 1, 1, ' ', write_width);
+    for (int i = 1; i < write_height; ++i) {
+        mvwhline(info_window, i, 1, ' ', write_width);
     }
 
-    int j = 0;
+    int j = 1;
     if (total_lines > lines_pos) {
         for (int i = lines_pos + 1; i < write_height; ++i) {
-            mvwprintw(info_window, j++ + 1, 1, mega_buffer[i]);
+            mvwprintw(info_window, j++, 1, mega_buffer[i]);
         }
     }
     for (int i = 0; i < lines_pos; ++i) {
-        mvwprintw(info_window, j++ + 1, 1, mega_buffer[i]);
+        mvwprintw(info_window, j++, 1, mega_buffer[i]);
     }
 
     wrefresh(info_window);
