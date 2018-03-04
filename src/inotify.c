@@ -37,13 +37,13 @@ void wait_for_logs(const int inot_fd, const int fail_max, const int timeout) {
     for (;;) {
         int n = wait_epoll_event(epollfd, event_list);
         for (int i = 0; i < n; ++i) {
+            process_secure_logs(fail_max, timeout);
 empty_inotify:
             ensure_nonblock(read(event_list[i].data.fd, buf, sizeof(buf)) != -1);
             if (errno == EAGAIN) {
-                continue;
+                break;
             }
             //handle updated log file
-            process_secure_logs(fail_max, timeout);
             goto empty_inotify;
         }
     }
@@ -69,7 +69,7 @@ void process_secure_logs(const int fail_max, const int timeout) {
     char message[1024];
     while(fgets(buffer, 1024, result)) {
         char *ip = strchr(buffer, ' ') + 1;
-        ip[strlen(ip) - 2] = '\0';
+        ip[strlen(ip) - 1] = '\0';
         memset(message, 0, 1024);
         sprintf(message, "%s %s\n", (buffer[0] == 'B') ? "Banning " : "Unbanning ", ip);
         add_msg(message);
