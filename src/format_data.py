@@ -11,7 +11,7 @@ import os.path
 if not os.path.exists('/tmp/8006'):
     os.makedirs('/tmp/8006')
 
-f = subprocess.run(['grep', '-i', 'failed password', '/home/john/Documents/BCIT/COMP8006/final/network1/web/log/secure'], stdout=subprocess.PIPE)
+f = subprocess.run(['grep', '-i', 'failed password', '/var/log/secure'], stdout=subprocess.PIPE)
 
 g = f.stdout.split(b'\n');
 
