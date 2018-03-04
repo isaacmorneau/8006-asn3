@@ -37,7 +37,6 @@ void wait_for_logs(const int inot_fd, const int fail_max, const int timeout) {
     for (;;) {
         int n = wait_epoll_event(epollfd, event_list);
         for (int i = 0; i < n; ++i) {
-            ensure(event_list[i].events & ~EPOLLIN == 0);
 empty_inotify:
             ensure_nonblock(read(event_list[i].data.fd, buf, sizeof(buf)) != -1);
             if (errno == EAGAIN) {
@@ -61,7 +60,7 @@ void process_secure_logs(const int fail_max, const int timeout) {
     char command[1024];
     memset(command, 0, 1024);
 
-    sprintf(command, "python format_data.py %d %d", fail_max, time(NULL) + timeout);
+    sprintf(command, "python src/format_data.py %d %d", fail_max, time(NULL) + timeout);
 
     FILE *result;
     ensure((result = popen(command, "r")) != NULL);
@@ -70,6 +69,7 @@ void process_secure_logs(const int fail_max, const int timeout) {
     char message[1024];
     while(fgets(buffer, 1024, result)) {
         char *ip = strchr(buffer, ' ') + 1;
+        ip[strlen(ip) - 2] = '\0';
         memset(message, 0, 1024);
         sprintf(message, "%s %s\n", (buffer[0] == 'B') ? "Banning " : "Unbanning ", ip);
         add_msg(message);
