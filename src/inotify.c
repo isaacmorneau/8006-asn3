@@ -59,7 +59,8 @@ void process_secure_logs(void) {
 
     //This command will need to be tweaked obviously
     FILE *result;
-    ensure((result = popen("grep -i failed /var/log/secure", "r")) != NULL);
+    ensure((result = popen("grep -i 'failed password' secure \
+                    | awk -F ' ' {'printf(\"%s %s %s %s\n\", $1, $2, $3, $(NF-3));'}", "r")) != NULL);
 
     fread(buffer, sizeof(unsigned char), size, result);
 
