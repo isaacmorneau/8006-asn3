@@ -7,6 +7,8 @@
 #include <curses.h>
 #include <getopt.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/signal.h>
 #include "common.h"
 #include "ui.h"
 #include "inotify.h"
@@ -114,17 +116,29 @@ int main(int argc, char **argv) {
     }
 
     if (daemon) {
-        int pid, sid;
-        ensure((pid = fork()) != -1);
-        if (!pid) {//child to daemonize
-            umask(0);
-            ensure(sid = setsid());
-            chdir("/");
-            close(STDIN_FILENO);
-            close(STDOUT_FILENO);
-            close(STDERR_FILENO);
-        } else {//parrent
-            return EXIT_SUCCESS;
+        pid_t pid;
+        pid = fork();
+        if (pid < 0)
+            exit(EXIT_FAILURE);
+        if (pid > 0)
+            exit(EXIT_SUCCESS);
+
+        if (setsid() < 0)
+            exit(EXIT_FAILURE);
+
+        signal(SIGCHLD, SIG_IGN);
+        signal(SIGHUP, SIG_IGN);
+
+        pid = fork();
+
+        if (pid < 0)
+            exit(EXIT_FAILURE);
+        if (pid > 0)
+            exit(EXIT_SUCCESS);
+        umask(0);
+        chdir("/");
+        for (int x = sysconf(_SC_OPEN_MAX); x>=0; x--) {
+            close (x);
         }
     }
 
