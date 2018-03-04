@@ -16,6 +16,7 @@ static void print_help(void){
     puts("usage options:\n"
             "\t[t]ime - set the time limit\n"
             "\t[a]ttempt - set the attempt limt\n"
+            "\t[d]aemon - set the attempt limt\n"
             "\t[h]elp - this message");
 }
 
