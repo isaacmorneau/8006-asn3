@@ -38,7 +38,11 @@ for ip in x.keys():
             tok = line.split()
             data = [e for e in data if e > int(tok[0])]
             if (int(datetime.datetime.now().timestamp()) > int(tok[1]) and int(tok[1]) != -1):
-                print('U ' + ip)
+                r = subprocess.Popen(['iptables', '-L', '-n'], stdout=subprocess.PIPE)
+                d = subprocess.Popen(['grep', ip], stdin=r.stdout, stdout=subprocess.PIPE)
+                out, err = d.communicate()
+                if (out is not None and out):
+                    print('U ' + ip)
 
         rec.close()
     else:
