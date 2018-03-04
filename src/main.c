@@ -6,6 +6,7 @@
 #include <ncurses.h>
 #include <curses.h>
 #include <getopt.h>
+#include <sys/stat.h>
 #include "common.h"
 #include "ui.h"
 #include "inotify.h"
@@ -112,8 +113,22 @@ int main(int argc, char **argv) {
         }
     }
 
-    wait_for_logs(create_inotify_descriptor(), attempt_limt, timelimit);
+    if (daemon) {
+        int pid, sid;
+        ensure((pid = fork()) != -1);
+        if (!pid) {//child to daemonize
+            umask(0);
+            ensure(sid = setsid());
+            chdir("/");
+            close(STDIN_FILENO);
+            close(STDOUT_FILENO);
+            close(STDERR_FILENO);
+        } else {//parrent
+            return EXIT_SUCCESS;
+        }
+    }
 
+    wait_for_logs(create_inotify_descriptor(), attempt_limt, timelimit);
 
     if (!daemon)
         close_ui();
