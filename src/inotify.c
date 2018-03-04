@@ -4,9 +4,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <limits.h>
+#include <string.h>
 #include "inotify.h"
+#include "iptables.h"
 #include "epoll.h"
 #include "common.h"
+#include "ui.h"
 
 static const char *log_name = "/var/log/secure";
 
@@ -54,20 +57,20 @@ void process_secure_logs(void) {
 
     size_t size = st.st_size;
 
-    unsigned char *buffer;
-    ensure((buffer = malloc(size)) != NULL);
-
     //This command will need to be tweaked obviously
     FILE *result;
-    ensure((result = popen("grep -i 'failed password' secure \
-                    | awk -F ' ' {'printf(\"%s %s %s %s\n\", $1, $2, $3, $(NF-3));'}", "r")) != NULL);
+    ensure((result = popen("python format_data.py 100 10", "r")) != NULL);
 
-    fread(buffer, sizeof(unsigned char), size, result);
-
-    ensure(ferror(result) == 0);
-
-    //Do something with the result data
-
+    char buffer[1025];
+    while(fgets(buffer, 1024, result)) {
+        char *ip = strchr(buffer, ' ') + 1;
+        if (buffer[0] == 'B') {
+            //Ban ip
+            block_ip(ip);
+        } else {
+            //Un-ban ip
+            unblock_ip(ip);
+        }
+    }
     fclose(result);
-    free(buffer);
 }
