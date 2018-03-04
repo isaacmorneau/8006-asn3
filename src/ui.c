@@ -57,7 +57,7 @@ int total_lines = 0;
 void add_msg(const char * restrict msg) {
     ++total_lines;
     //copy in the line
-    strcpy(mega_buffer[lines_pos++], msg);
+    strncpy(mega_buffer[lines_pos++], msg, write_width);
     if (lines_pos >= write_height) {
         lines_pos = 0;
     }
