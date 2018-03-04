@@ -10,7 +10,8 @@
 
 int main(int argc, char **argv) {
     int ret;
-
+    int attempt_limt = 3;
+    int timelimit = 5;
     //check for shell
     ret = system(NULL);
     init_ui();
@@ -20,10 +21,6 @@ int main(int argc, char **argv) {
     } else {
         add_msg("Shell is not avalible");
     }
-    add_msg("testing 1");
-    add_msg("testing 2");
-    add_msg("testing 3");
-
     if (getuid()) {
         add_msg("Program not running as root, attempting to gain root privileges");
 
@@ -33,19 +30,28 @@ int main(int argc, char **argv) {
     }
 
     int ch;
+    char input[256];
     while((ch = getch()) != KEY_F(1)) {
         switch (ch) {
-            case 'a':
-                add_msg("a key pressed");
+            case KEY_F(2):
+                add_msg("Starting...");
                 break;
-            case 'f':
-                add_msg("f key pressed");
+            case KEY_F(3):
+                add_msg("Enter Attempt Limit: ");
+                get_msg(input, 256);
+                timelimit = atoi(input);
+                break;
+            case KEY_F(4):
+                add_msg("Enter Timelimit: ");
+                get_msg(input, 256);
+                attempt_limt = atoi(input);
                 break;
             default:
-                add_msg("key pressed");
+                //if its not recognized just ignore it
                 break;
         }
     }
+    //TODO stuff???
 
     close_ui();
     return EXIT_SUCCESS;

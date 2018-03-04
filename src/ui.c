@@ -37,6 +37,9 @@ void init_ui() {
 
     //add all commands here
     mvwprintw(command_window, 1, 1, "F1 - Exit");
+    mvwprintw(command_window, 2, 1, "F2 - Start");
+    mvwprintw(command_window, 3, 1, "F3 - Set Attempts");
+    mvwprintw(command_window, 4, 1, "F4 - Set Timelimit");
 
     wrefresh(command_window);
     wrefresh(info_window);
@@ -78,4 +81,13 @@ void add_msg(const char * restrict msg) {
     }
 
     wrefresh(info_window);
+}
+
+void get_msg(char * restrict msg, int len) {
+    nocbreak();
+    echo();
+    mvwgetnstr(info_window, lines_pos + 1, 1, msg, len);
+    add_msg(msg);
+    noecho();
+    cbreak();
 }
