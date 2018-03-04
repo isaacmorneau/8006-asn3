@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <limits.h>
 #include <string.h>
+#include <time.h>
 #include "inotify.h"
 #include "iptables.h"
 #include "epoll.h"
@@ -19,7 +20,7 @@ int create_inotify_descriptor(void) {
     return fd;
 }
 
-void wait_for_logs(const int inot_fd) {
+void wait_for_logs(const int inot_fd, const int fail_max, const int timeout) {
     int epollfd = create_epoll_fd();
 
     struct epoll_event ev;
@@ -43,7 +44,7 @@ empty_inotify:
                 continue;
             }
             //handle updated log file
-            process_secure_logs();
+            process_secure_logs(fail_max, timeout);
             goto empty_inotify;
         }
     }
@@ -51,19 +52,27 @@ empty_inotify:
     free(event_list);
 }
 
-void process_secure_logs(void) {
+void process_secure_logs(const int fail_max, const int timeout) {
     struct stat st;
     ensure(stat(log_name, &st) == 0);
 
     size_t size = st.st_size;
 
-    //This command will need to be tweaked obviously
+    char command[1024];
+    memset(command, 0, 1024);
+
+    sprintf(command, "python format_data.py %d %d", fail_max, time(NULL) + timeout);
+
     FILE *result;
-    ensure((result = popen("python format_data.py 100 10", "r")) != NULL);
+    ensure((result = popen(command, "r")) != NULL);
 
     char buffer[1025];
+    char message[1024];
     while(fgets(buffer, 1024, result)) {
         char *ip = strchr(buffer, ' ') + 1;
+        memset(message, 0, 1024);
+        sprintf(message, "%s %s\n", (buffer[0] == 'B') ? "Banning " : "Unbanning ", ip);
+        add_msg(message);
         if (buffer[0] == 'B') {
             //Ban ip
             block_ip(ip);

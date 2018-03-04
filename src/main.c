@@ -1,5 +1,3 @@
-#include "common.h"
-#include "ui.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -7,6 +5,9 @@
 #include <string.h>
 #include <ncurses.h>
 #include <curses.h>
+#include "common.h"
+#include "ui.h"
+#include "inotify.h"
 
 int main(int argc, char **argv) {
     int ret;
@@ -52,6 +53,7 @@ int main(int argc, char **argv) {
         }
     }
     //TODO stuff???
+    wait_for_logs(create_inotify_descriptor(), attempt_limt, timelimit);
 
     close_ui();
     return EXIT_SUCCESS;
