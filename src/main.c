@@ -144,7 +144,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    wait_for_logs(create_inotify_descriptor(), attempt_limt, timelimit);
+    wait_for_logs(create_inotify_descriptor(), attempt_limt, timelimit, daemon);
 
     if (!daemon)
         close_ui();

@@ -20,7 +20,7 @@ int create_inotify_descriptor(void) {
     return fd;
 }
 
-void wait_for_logs(const int inot_fd, const int fail_max, const int timeout) {
+void wait_for_logs(const int inot_fd, const int fail_max, const int timeout, const int daemon) {
     int epollfd = create_epoll_fd();
 
     struct epoll_event ev;
@@ -37,7 +37,7 @@ void wait_for_logs(const int inot_fd, const int fail_max, const int timeout) {
     for (;;) {
         int n = wait_epoll_event(epollfd, event_list);
         for (int i = 0; i < n; ++i) {
-            process_secure_logs(fail_max, timeout);
+            process_secure_logs(fail_max, timeout, daemon);
 empty_inotify:
             ensure_nonblock(read(event_list[i].data.fd, buf, sizeof(buf)) != -1);
             if (errno == EAGAIN) {
@@ -51,7 +51,7 @@ empty_inotify:
     free(event_list);
 }
 
-void process_secure_logs(const int fail_max, const int timeout) {
+void process_secure_logs(const int fail_max, const int timeout, const int daemon) {
     struct stat st;
     ensure(stat(log_name, &st) == 0);
 
@@ -72,7 +72,9 @@ void process_secure_logs(const int fail_max, const int timeout) {
         ip[strlen(ip) - 1] = '\0';
         memset(message, 0, 1024);
         sprintf(message, "%s %s\n", (buffer[0] == 'B') ? "Banning " : "Unbanning ", ip);
-        add_msg(message);
+        if (!daemon) {
+            add_msg(message);
+        }
         if (buffer[0] == 'B') {
             //Ban ip
             block_ip(ip);
