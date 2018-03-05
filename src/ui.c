@@ -12,6 +12,8 @@ char ** mega_buffer;
 int write_width = 0;
 int write_height = 0;
 
+const char * title = "8006-asn3: Isaac & John; Splurple";
+
 void init_ui() {
     //start up ncurses and setup key handling
     //honestly why are there so many different init functions???
@@ -25,23 +27,36 @@ void init_ui() {
     NCURSES_BULLSHIT_INIT;
 
     write_width = COLS - COMMAND_WIDTH - 2;
-    write_height = LINES - 1;
+    write_height = LINES - 2;
 
-    command_window = newwin(LINES, COMMAND_WIDTH, 0, 0);
-    info_window = newwin(LINES, write_width, 0, COMMAND_WIDTH + 1);
+    command_window = newwin(LINES-1, COMMAND_WIDTH, 1, 0);
+    info_window = newwin(LINES-1, write_width, 1, COMMAND_WIDTH + 1);
 
     //allocate a grid for the output buffer
     mega_buffer = (char **)calloc(1, sizeof(char*)*write_height);
     for (int i = 0;i < write_height; ++i)
         mega_buffer[i] = (char *)calloc(1, sizeof(char)*write_width);
 
+    //draw window boxes
     box(command_window, 0, 0);
     box(info_window, 0, 0);
 
-    //add all commands here
+    //start up the colirs
     init_pair(1, COLOR_RED, -1);
     init_pair(2, COLOR_GREEN, -1);
+    init_pair(3, COLOR_BLUE, -1);
+    init_pair(4, COLOR_MAGENTA, -1);
 
+    //set the title
+    wattron(stdscr, COLOR_PAIR(3));
+    mvwhline(stdscr, 0, 0, '-', COLS);
+    wattroff(stdscr, COLOR_PAIR(3));
+    wattron(stdscr, COLOR_PAIR(4));
+    mvwprintw(stdscr, 0, (COLS/2)-(strlen(title)/2), title);
+    wattroff(stdscr, COLOR_PAIR(4));
+
+
+    //add all commands here
     wattron(command_window, COLOR_PAIR(1));
     mvwprintw(command_window, 1, 1, "F1 - Exit");
     mvwprintw(command_window, 2, 1, "F2 - Start");
