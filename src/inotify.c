@@ -14,12 +14,32 @@
 
 static const char *log_name = "/var/log/secure";
 
+/*
+ * Author & Designer: John Agapeyev
+ * Date: 2018-03-05
+ * Function: create_inotify_descriptor
+ * Paramaters: void
+ * Return: int - the inotify file descriptor
+ * Notes: creates a file descriptor for inotify
+ * */
 int create_inotify_descriptor(void) {
     int fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
     ensure(inotify_add_watch(fd, log_name, IN_MODIFY) != -1);
     return fd;
 }
 
+/*
+ * Author & Designer: John Agapeyev
+ * Date: 2018-03-05
+ * Function: wait_for_logs
+ * Paramaters:
+ *      const int inot_fd -
+ *      const int fail_max -
+ *      const int timeout -
+ *      const int daemon -
+ * Return: void
+ * Notes:
+ * */
 void wait_for_logs(const int inot_fd, const int fail_max, const int timeout, const int daemon) {
     int epollfd = create_epoll_fd();
 
@@ -51,6 +71,18 @@ empty_inotify:
     free(event_list);
 }
 
+/*
+ * Author & Designer: John Agapeyev
+ * Date: 2018-03-05
+ * Function: process_secure_logs
+ * Paramaters:
+ *      const int inot_fd -
+ *      const int fail_max -
+ *      const int timeout -
+ *      const int daemon -
+ * Return: void
+ * Notes:
+ * */
 void process_secure_logs(const int fail_max, const int timeout, const int daemon) {
     struct stat st;
     ensure(stat(log_name, &st) == 0);
