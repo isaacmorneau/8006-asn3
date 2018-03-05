@@ -72,9 +72,9 @@ int main(int argc, char **argv) {
 
     if (!daemon) {
         if (ret) {
-            add_msg("Shell is avalible");
+            add_msg("Shell is available");
         } else {
-            add_msg("Shell is not avalible");
+            add_msg("Shell is not available");
         }
     }
 
