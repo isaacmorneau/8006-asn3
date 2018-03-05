@@ -92,7 +92,7 @@ void process_secure_logs(const int fail_max, const int timeout, const int daemon
     char command[1024];
     memset(command, 0, 1024);
 
-    sprintf(command, "python src/format_data.py %d %d", fail_max, time(NULL) + timeout);
+    sprintf(command, "python3 src/format_data.py %d %d", fail_max, time(NULL) + timeout);
 
     FILE *result;
     ensure((result = popen(command, "r")) != NULL);
