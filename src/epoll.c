@@ -47,7 +47,7 @@ void add_epoll_fd(const int epollfd, const int sock, struct epoll_event *ev) {
  * */
 int wait_epoll_event(const int epollfd, struct epoll_event *events) {
     int nevents;
-    ensure((nevents = epoll_wait(epollfd, events, MAX_EPOLL_EVENTS, -1)) != -1);
+    ensure((nevents = epoll_wait(epollfd, events, MAX_EPOLL_EVENTS, 1000)) != -1);
     return nevents;
 }
 
