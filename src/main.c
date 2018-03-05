@@ -17,16 +17,18 @@
 
 static void print_help(void){
     puts("usage options:\n"
-            "\t[t]ime - set the time limit\n"
-            "\t[a]ttempt - set the attempt limt\n"
+            "\t[t]ime <seconds; default 1 day; -1 for infinite>- set the time limit\n"
+            "\t[a]ttempt <default 3> - set the attempt limt\n"
             "\t[d]aemon - set the attempt limt\n"
             "\t[h]elp - this message");
 }
 
 int main(int argc, char **argv) {
     int ret, c;
+    //default 3 trys before timeout
     int attempt_limt = 3;
-    int timelimit = 5;
+    //default one day timeout
+    int timelimit = 86400;
     int daemon = 0;
 
     while (1) {
