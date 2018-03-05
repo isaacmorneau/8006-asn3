@@ -14,7 +14,10 @@ int write_height = 0;
 
 void init_ui() {
     //start up ncurses and setup key handling
+    //honestly why are there so many different init functions???
     initscr();
+    start_color();
+    use_default_colors();
     raw();
     cbreak();
     keypad(stdscr, TRUE);
@@ -36,10 +39,15 @@ void init_ui() {
     box(info_window, 0, 0);
 
     //add all commands here
+    init_pair(1, COLOR_RED, -1);
+    init_pair(2, COLOR_GREEN, -1);
+
+    wattron(command_window, COLOR_PAIR(1));
     mvwprintw(command_window, 1, 1, "F1 - Exit");
     mvwprintw(command_window, 2, 1, "F2 - Start");
     mvwprintw(command_window, 3, 1, "F3 - Set Attempts");
     mvwprintw(command_window, 4, 1, "F4 - Set Timelimit");
+    wattroff(command_window, COLOR_PAIR(1));
 
     wrefresh(command_window);
     wrefresh(info_window);
@@ -67,9 +75,10 @@ void add_msg(const char * restrict msg) {
 
     //clear the output
     for (int i = 1; i < write_height; ++i) {
-        mvwhline(info_window, i, 1, ' ', write_width);
+        mvwhline(info_window, i, 1, ' ', write_width - 2);
     }
 
+    wattron(info_window, COLOR_PAIR(2));
     int j = 1;
     if (total_lines > lines_pos) {
         for (int i = lines_pos + 1; i < write_height; ++i) {
@@ -79,14 +88,17 @@ void add_msg(const char * restrict msg) {
     for (int i = 0; i < lines_pos; ++i) {
         mvwprintw(info_window, j++, 1, mega_buffer[i]);
     }
+    wattroff(info_window, COLOR_PAIR(2));
 
     wrefresh(info_window);
 }
 
 void get_msg(char * restrict msg, int len) {
+    wattron(info_window, COLOR_PAIR(2));
     nocbreak();
     echo();
     mvwgetnstr(info_window, lines_pos + 1, 1, msg, len);
+    wattroff(info_window, COLOR_PAIR(2));
     add_msg(msg);
     noecho();
     cbreak();
