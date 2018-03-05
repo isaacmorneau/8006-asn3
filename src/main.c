@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
 
     system("iptables -F");
     system("iptables -X");
-    system("rm /tmp/8006/*");
+    system("rm /tmp/8006/* >/dev/null 2>/dev/null");
 
     wait_for_logs(create_inotify_descriptor(), attempt_limt, timelimit, daemon);
 
