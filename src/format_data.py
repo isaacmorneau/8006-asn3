@@ -47,6 +47,8 @@ for ip in x.keys():
                     unb = True
 
         if (len(data) >= int(sys.argv[1]) and unb is False):
+            rec.close()
+            rec = open('/tmp/8006/' + ip, 'w')
             rec.write(str(int(datetime.datetime.now().timestamp())) + " " + sys.argv[2] + "\n")
             print('B ' + ip)
 
