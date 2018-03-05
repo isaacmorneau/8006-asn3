@@ -59,7 +59,7 @@ void wait_for_logs(const int inot_fd, const int fail_max, const int timeout, con
         for (int i = 0; i < n; ++i) {
             process_secure_logs(fail_max, timeout, daemon);
 empty_inotify:
-            ensure_nonblock(read(event_list[i].data.fd, buf, sizeof(buf)) != -1);
+            ensure_nonblock(read(inot_fd, buf, sizeof(buf)) != -1);
             if (errno == EAGAIN) {
                 break;
             }
@@ -84,15 +84,10 @@ empty_inotify:
  * Notes:
  * */
 void process_secure_logs(const int fail_max, const int timeout, const int daemon) {
-    struct stat st;
-    ensure(stat(log_name, &st) == 0);
-
-    size_t size = st.st_size;
-
     char command[1024];
     memset(command, 0, 1024);
 
-    sprintf(command, "python3 src/format_data.py %d %d", fail_max, time(NULL) + timeout);
+    sprintf(command, "python3 src/format_data.py %d %ld", fail_max, time(NULL) + timeout);
 
     FILE *result;
     ensure((result = popen(command, "r")) != NULL);
