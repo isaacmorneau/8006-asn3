@@ -33,12 +33,11 @@ int create_inotify_descriptor(void) {
  * Date: 2018-03-05
  * Function: wait_for_logs
  * Paramaters:
- *      const int inot_fd -
- *      const int fail_max -
- *      const int timeout -
- *      const int daemon -
+ *      const int inot_fd - The inotify descriptor to watch
+ *      const int fail_max - The number of failed attempts before blocking
+ *      const int timeout - The number of seconds to block
+ *      const int daemon - Whether the application is in daemon mode
  * Return: void
- * Notes:
  * */
 void wait_for_logs(const int inot_fd, const int fail_max, const int timeout, const int daemon) {
     int epollfd = create_epoll_fd();
@@ -76,12 +75,11 @@ empty_inotify:
  * Date: 2018-03-05
  * Function: process_secure_logs
  * Paramaters:
- *      const int inot_fd -
- *      const int fail_max -
- *      const int timeout -
- *      const int daemon -
+ *      const int inot_fd - The inotify descriptor to watch
+ *      const int fail_max - The number of failed attempts before blocking
+ *      const int timeout - The number of seconds to block
+ *      const int daemon - Whether the application is in daemon mode
  * Return: void
- * Notes:
  * */
 void process_secure_logs(const int fail_max, const int timeout, const int daemon) {
     char command[1024];
