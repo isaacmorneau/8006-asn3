@@ -117,12 +117,12 @@ int main(int argc, char **argv) {
                 case KEY_F(3):
                     add_msg("Enter Attempt Limit: ");
                     get_msg(input, 256);
-                    timelimit = atoi(input);
+                    attempt_limt = atoi(input);
                     break;
                 case KEY_F(4):
                     add_msg("Enter Timelimit: ");
                     get_msg(input, 256);
-                    attempt_limt = atoi(input);
+                    timelimit = atoi(input);
                     break;
                 default:
                     //if its not recognized just ignore it
