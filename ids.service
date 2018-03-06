@@ -1,0 +1,10 @@
+[Unit]
+Description=8006 Assignment 3 service
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/8006-asn3 -d -t 10 -a 3
+
+[Install]
+WantedBy=multi-user.target
