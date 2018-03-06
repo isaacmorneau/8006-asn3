@@ -15,14 +15,31 @@
 
 #define SOCKOPTS "hda:t:"
 
+/*
+ * Author & Designer: Isaac Morneau
+ * Date: 2018-03-05
+ * Function: print_help
+ * Paramaters: void
+ * Return: void
+ * Notes: prints usage information
+ * */
 static void print_help(void){
     puts("usage options:\n"
-            "\t[t]ime <seconds; default 1 day; -1 for infinite>- set the time limit\n"
-            "\t[a]ttempt <default 3> - set the attempt limt\n"
-            "\t[d]aemon - set the attempt limt\n"
-            "\t[h]elp - this message");
+            "\t-[-t]ime <seconds; default 1 day; -1 for infinite>- set the time limit\n"
+            "\t-[-a]ttempt <default 3> - set the attempt limt\n"
+            "\t-[-d]aemon - set the attempt limt\n"
+            "\t-[-h]elp - this message");
 }
 
+/*
+ * Author & Designer: Isaac Morneau
+ * Date: 2018-03-05
+ * Function: main
+ * Paramaters: int argc - the number of arguments
+ *      char **argv - the array of string arguments
+ * Return: int - the return code of the program
+ * Notes: parses the arguments and starts either a UI or a daemon
+ * */
 int main(int argc, char **argv) {
     int ret, c;
     //default 3 trys before timeout
@@ -100,12 +117,12 @@ int main(int argc, char **argv) {
                 case KEY_F(3):
                     add_msg("Enter Attempt Limit: ");
                     get_msg(input, 256);
-                    timelimit = atoi(input);
+                    attempt_limt = atoi(input);
                     break;
                 case KEY_F(4):
                     add_msg("Enter Timelimit: ");
                     get_msg(input, 256);
-                    attempt_limt = atoi(input);
+                    timelimit = atoi(input);
                     break;
                 default:
                     //if its not recognized just ignore it
@@ -143,6 +160,10 @@ int main(int argc, char **argv) {
             close (x);
         }
     }
+
+    system("iptables -F");
+    system("iptables -X");
+    system("rm /tmp/8006/* >/dev/null 2>/dev/null");
 
     wait_for_logs(create_inotify_descriptor(), attempt_limt, timelimit, daemon);
 

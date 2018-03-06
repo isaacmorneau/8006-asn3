@@ -1,19 +1,3 @@
-/*
- * SOURCE FILE: epoll.c - Implementation of functions declared in epoll.h
- *
- * PROGRAM: 8006-asn3
- *
- * DATE: March 3, 2018
- *
- * FUNCTIONS:
- * int create_epoll_fd(void);
- * void add_epoll_fd(const int epollfd, const int sock, struct epoll_event *ev);
- * int wait_epoll_event(const int epollfd, struct epoll_event *events);
- *
- * DESIGNER: John Agapeyev
- *
- * PROGRAMMER: John Agapeyev
- */
 #include <sys/epoll.h>
 #include <errno.h>
 #include <stdio.h>
@@ -23,23 +7,13 @@
 #include "common.h"
 
 /*
- * FUNCTION: create_epoll_fd
- *
- * DATE:
- * Dec. 2, 2017
- *
- * DESIGNER:
- * John Agapeyev
- *
- * PROGRAMMER:
- * John Agapeyev
- *
- * INTERFACE:
- * int create_epoll_fd(void);
- *
- * RETURNS:
- * int - The created epoll file descriptor
- */
+ * Author & Designer: John Agapeyev
+ * Date: 2018-03-05
+ * Function: create_epoll_fd
+ * Paramaters: void
+ * Return: int - the epoll file descriptor
+ * Notes: creates a file descriptor for epoll
+ * */
 int create_epoll_fd(void) {
     int efd;
     ensure((efd = epoll_create1(0)) != -1);
@@ -47,57 +21,32 @@ int create_epoll_fd(void) {
 }
 
 /*
- * FUNCTION: add_epoll_fd
- *
- * DATE:
- * Dec. 2, 2017
- *
- * DESIGNER:
- * John Agapeyev
- *
- * PROGRAMMER:
- * John Agapeyev
- *
- * INTERFACE:
- * void add_epoll_fd(const int epollfd, const int sock, struct epoll_event *ev);
- *
- * PARAMETERS:
- * const int epollfd - The epoll descriptor to add the socket to
- * const int sock - The socket to add to epoll
- * struct epoll_event *ev - The epoll_event struct saying how epoll should handle the socket
- *
- * RETURNS:
- * void
- */
+ * Author & Designer: John Agapeyev
+ * Date: 2018-03-05
+ * Function: add_epoll_fd
+ * Paramaters:
+ *      const int epollfd - The epoll descriptor to add the socket to
+ *      const int sock - The socket to add to epoll
+ *      struct epoll_event *ev - The epoll_event struct saying how epoll should handle the socket
+ * Return: void
+ * Notes: adds a file descriptor with an event to a epoll struct
+ * */
 void add_epoll_fd(const int epollfd, const int sock, struct epoll_event *ev) {
     ensure(epoll_ctl(epollfd, EPOLL_CTL_ADD, sock, ev) != -1);
 }
 
 /*
- * FUNCTION: wait_epoll_event
- *
- * DATE:
- * Dec. 2, 2017
- *
- * DESIGNER:
- * John Agapeyev
- *
- * PROGRAMMER:
- * John Agapeyev
- *
- * INTERFACE:
- * int wait_epoll_event(const int epollfd, struct epoll_event *events);
- *
- * PARAMETERS:
- * const int epollfd - The epoll descriptor to wait on
- * struct epoll_event *events - The event list that epoll write too
- *
- * RETURNS:
- * int - The number of events on the epoll descriptor
- */
+ * Author & Designer: John Agapeyev
+ * Date: 2018-03-05
+ * Function: wait_epoll_event
+ * Paramaters:
+ *      const int epollfd - the epoll descriptor to wait on
+ *      struct epoll_event *events - the buffer to return the events un
+ * Return: int - the number of events returned
+ * Notes: waits for events on the specified epoll descriptor
+ * */
 int wait_epoll_event(const int epollfd, struct epoll_event *events) {
-    int nevents;
-    ensure((nevents = epoll_wait(epollfd, events, MAX_EPOLL_EVENTS, -1)) != -1);
-    return nevents;
+    ensure(epoll_wait(epollfd, events, MAX_EPOLL_EVENTS, 1000) != -1);
+    return 1;
 }
 

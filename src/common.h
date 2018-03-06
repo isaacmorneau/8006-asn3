@@ -1,6 +1,10 @@
 #ifndef COMMON_H
 #define COMMON_H
-
+/*
+ * Author & Designer: Isaac Morneau
+ * Date: 2018-03-05
+ * Notes: holds common error handling wrappers for all syscalls
+ * */
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>

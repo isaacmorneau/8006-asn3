@@ -14,12 +14,31 @@
 
 static const char *log_name = "/var/log/secure";
 
+/*
+ * Author & Designer: John Agapeyev
+ * Date: 2018-03-05
+ * Function: create_inotify_descriptor
+ * Paramaters: void
+ * Return: int - the inotify file descriptor
+ * Notes: creates a file descriptor for inotify
+ * */
 int create_inotify_descriptor(void) {
     int fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
     ensure(inotify_add_watch(fd, log_name, IN_MODIFY) != -1);
     return fd;
 }
 
+/*
+ * Author & Designer: John Agapeyev
+ * Date: 2018-03-05
+ * Function: wait_for_logs
+ * Paramaters:
+ *      const int inot_fd - The inotify descriptor to watch
+ *      const int fail_max - The number of failed attempts before blocking
+ *      const int timeout - The number of seconds to block
+ *      const int daemon - Whether the application is in daemon mode
+ * Return: void
+ * */
 void wait_for_logs(const int inot_fd, const int fail_max, const int timeout, const int daemon) {
     int epollfd = create_epoll_fd();
 
@@ -39,7 +58,7 @@ void wait_for_logs(const int inot_fd, const int fail_max, const int timeout, con
         for (int i = 0; i < n; ++i) {
             process_secure_logs(fail_max, timeout, daemon);
 empty_inotify:
-            ensure_nonblock(read(event_list[i].data.fd, buf, sizeof(buf)) != -1);
+            ensure_nonblock(read(inot_fd, buf, sizeof(buf)) != -1);
             if (errno == EAGAIN) {
                 break;
             }
@@ -51,16 +70,22 @@ empty_inotify:
     free(event_list);
 }
 
+/*
+ * Author & Designer: John Agapeyev
+ * Date: 2018-03-05
+ * Function: process_secure_logs
+ * Paramaters:
+ *      const int inot_fd - The inotify descriptor to watch
+ *      const int fail_max - The number of failed attempts before blocking
+ *      const int timeout - The number of seconds to block
+ *      const int daemon - Whether the application is in daemon mode
+ * Return: void
+ * */
 void process_secure_logs(const int fail_max, const int timeout, const int daemon) {
-    struct stat st;
-    ensure(stat(log_name, &st) == 0);
-
-    size_t size = st.st_size;
-
     char command[1024];
     memset(command, 0, 1024);
 
-    sprintf(command, "python src/format_data.py %d %d", fail_max, time(NULL) + timeout);
+    sprintf(command, "python3 src/format_data.py %d %ld", fail_max, time(NULL) + timeout);
 
     FILE *result;
     ensure((result = popen(command, "r")) != NULL);

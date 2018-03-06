@@ -14,7 +14,15 @@ int write_height = 0;
 
 const char * title = "8006-asn3: Isaac & John; Splurple";
 
-void init_ui() {
+/*
+ * Author & Designer: Isaac Morneau
+ * Date: 2018-03-05
+ * Function: init_ui
+ * Paramaters: void
+ * Return: void
+ * Notes: starts up ncurses systems and renders base windows
+ * */
+void init_ui(void) {
     //start up ncurses and setup key handling
     //honestly why are there so many different init functions???
     initscr();
@@ -68,7 +76,15 @@ void init_ui() {
     wrefresh(info_window);
 }
 
-void close_ui() {
+/*
+ * Author & Designer: Isaac Morneau
+ * Date: 2018-03-05
+ * Function: close_ui
+ * Paramaters: void
+ * Return: void
+ * Notes: shutdowns down the ncurses systems and returns the terminal to normal
+ * */
+void close_ui(void) {
     for (int i = 0;i < write_height; ++i)
         free(mega_buffer[i]);
     free(mega_buffer);
@@ -80,6 +96,14 @@ void close_ui() {
 
 int lines_pos = 0;
 int total_lines = 0;
+/*
+ * Author & Designer: Isaac Morneau
+ * Date: 2018-03-05
+ * Function: add_msg
+ * Paramaters: const char * restrict msg - the message to add to the info pane
+ * Return: void
+ * Notes: adds a message to the info pannel
+ * */
 void add_msg(const char * restrict msg) {
     ++total_lines;
     //copy in the line
@@ -107,8 +131,16 @@ void add_msg(const char * restrict msg) {
 
     wrefresh(info_window);
 }
-
-void get_msg(char * restrict msg, int len) {
+/*
+ * Author & Designer: Isaac Morneau
+ * Date: 2018-03-05
+ * Function: add_msg
+ * Paramaters: char * restrict msg - the buffer to read the input into
+ *      const int len - the size of the buffer
+ * Return: void
+ * Notes: gets user input from the info pannel
+ * */
+void get_msg(char * restrict msg, const int len) {
     wattron(info_window, COLOR_PAIR(2));
     nocbreak();
     echo();

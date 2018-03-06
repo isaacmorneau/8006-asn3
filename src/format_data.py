@@ -30,9 +30,10 @@ for line in g[:-1]:
 
 for ip in x.keys():
     data = x[ip]
+    unb = False
     if (os.path.isfile('/tmp/8006/' + ip)):
         #Read file for ban timestamp, and remove older entries
-        rec = open('/tmp/8006/' + ip, 'r')
+        rec = open('/tmp/8006/' + ip, 'r+')
 
         for line in rec:
             tok = line.split()
@@ -43,6 +44,13 @@ for ip in x.keys():
                 out, err = d.communicate()
                 if (out is not None and out):
                     print('U ' + ip)
+                    unb = True
+
+        if (len(data) >= int(sys.argv[1]) and unb is False):
+            rec.close()
+            rec = open('/tmp/8006/' + ip, 'w')
+            rec.write(str(int(datetime.datetime.now().timestamp())) + " " + sys.argv[2] + "\n")
+            print('B ' + ip)
 
         rec.close()
     else:
@@ -51,6 +59,6 @@ for ip in x.keys():
         rec.write(str(int(datetime.datetime.now().timestamp())) + " " + sys.argv[2] + "\n")
         rec.close()
 
-    if (len(data) >= int(sys.argv[1])):
-        print('B ' + ip)
+        if (len(data) >= int(sys.argv[1]) and unb is False):
+            print('B ' + ip)
 
